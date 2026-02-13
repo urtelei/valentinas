@@ -61,6 +61,7 @@ var nightFadeTimer = 0;
 var nightTextDelay = 1.5;
 var yesTwoScale = 1;
 var noTwoScale = 1;
+var heartFlowTimer = null;
 
 function showView(view) {
     view.classList.remove("hidden");
@@ -109,7 +110,6 @@ function playMessageSequence(textElement, messages, onDone) {
     showIndex(0);
 }
 
-
 function showSingleCelebration(view, textElement, message, onDone) {
     showView(view);
     textElement.textContent = message;
@@ -135,39 +135,74 @@ function showStandaloneMessages(messages, onDone) {
     });
 }
 
-function triggerHeartBurst() {
-    if (!heartOverlay) {
-        return Promise.resolve();
+function spawnFlowHeart(delayMs) {
+    if (!heartOverlay || body.classList.contains("theme-night")) {
+        return;
     }
 
-    var heartCount = 14;
-    for (var i = 0; i < heartCount; i++) {
-        var heart = document.createElement("span");
-        heart.className = "heart-burst";
-        heart.textContent = Math.random() > 0.5 ? "❤" : "♡";
+    var heart = document.createElement("span");
+    heart.className = "flow-heart";
+    heart.textContent = Math.random() > 0.5 ? "❤" : "♥";
 
-        var left = 12 + Math.random() * 76;
-        var drift = (Math.random() * 120 - 60).toFixed(0) + "px";
-        var delay = Math.floor(Math.random() * 160);
-        var size = 18 + Math.random() * 20;
+    var startX = (Math.random() * 100).toFixed(2) + "%";
+    var size = (14 + Math.random() * 30).toFixed(0) + "px";
+    var duration = (6.5 + Math.random() * 5).toFixed(2) + "s";
+    var drift = (Math.random() * 200 - 100).toFixed(0) + "px";
+    var opacity = (0.25 + Math.random() * 0.55).toFixed(2);
+    var rotateStart = (Math.random() * 60 - 30).toFixed(0) + "deg";
+    var rotateEnd = (Math.random() * 220 - 110).toFixed(0) + "deg";
+    var colors = ["#ff3f8e", "#ff5da2", "#f06292", "#d95089", "#ff7ab8"];
+    var color = colors[Math.floor(Math.random() * colors.length)];
 
-        heart.style.left = left + "%";
-        heart.style.setProperty("--drift-x", drift);
-        heart.style.animationDelay = delay + "ms";
-        heart.style.fontSize = size + "px";
+    heart.style.setProperty("--start-x", startX);
+    heart.style.setProperty("--heart-size", size);
+    heart.style.setProperty("--fall-duration", duration);
+    heart.style.setProperty("--drift-x", drift);
+    heart.style.setProperty("--heart-opacity", opacity);
+    heart.style.setProperty("--rotate-start", rotateStart);
+    heart.style.setProperty("--rotate-end", rotateEnd);
+    heart.style.setProperty("--heart-color", color);
 
-        heartOverlay.appendChild(heart);
-
-        setTimeout(function (node) {
-            if (node && node.parentNode) {
-                node.parentNode.removeChild(node);
-            }
-        }, 1300 + delay, heart);
+    if (delayMs) {
+        heart.style.animationDelay = delayMs + "ms";
     }
 
-    return new Promise(function (resolve) {
-        setTimeout(resolve, 420);
-    });
+    heartOverlay.appendChild(heart);
+
+    var cleanupDelay = parseFloat(duration) * 1000 + (delayMs || 0) + 120;
+    setTimeout(function (node) {
+        if (node && node.parentNode) {
+            node.parentNode.removeChild(node);
+        }
+    }, cleanupDelay, heart);
+}
+
+function startHeartFlow() {
+    if (!heartOverlay || heartFlowTimer) {
+        return;
+    }
+
+    for (var i = 0; i < 34; i++) {
+        spawnFlowHeart(Math.floor(Math.random() * 7000));
+    }
+
+    heartFlowTimer = setInterval(function () {
+        var burstCount = 2 + Math.floor(Math.random() * 2);
+        for (var i = 0; i < burstCount; i++) {
+            spawnFlowHeart(i * 120);
+        }
+    }, 420);
+}
+
+function stopHeartFlow() {
+    if (heartFlowTimer) {
+        clearInterval(heartFlowTimer);
+        heartFlowTimer = null;
+    }
+
+    if (heartOverlay) {
+        heartOverlay.innerHTML = "";
+    }
 }
 
 function startIntroFlow() {
@@ -195,9 +230,8 @@ function moveNoButton() {
     noButton.style.top = y + "px";
 }
 
-async function startCelebrationOne() {
+function startCelebrationOne() {
     scene = "celebration-1";
-    await triggerHeartBurst();
 
     hideView(proposalView, function () {
         showSingleCelebration(
@@ -226,13 +260,12 @@ function onNoButtonTwoClick() {
     noButtonTwo.style.transform = "scale(" + noTwoScale + ")";
 }
 
-async function startCelebrationTwo() {
+function startCelebrationTwo() {
     if (scene !== "proposal-2") {
         return;
     }
 
     scene = "celebration-2";
-    await triggerHeartBurst();
 
     hideView(proposalTwoView, function () {
         showSingleCelebration(
@@ -241,6 +274,7 @@ async function startCelebrationTwo() {
             celebrationTwoMessages[0],
             function () {
                 showStandaloneMessages(celebrationTwoMessages.slice(1), function () {
+                    stopHeartFlow();
                     body.classList.remove("theme-proposal");
                     body.classList.add("theme-night");
                     canvas.classList.add("active");
@@ -411,6 +445,7 @@ window.addEventListener("resize", function () {
 
 setupCanvas();
 createStars();
+startHeartFlow();
 
 setTimeout(function () {
     startIntroFlow();

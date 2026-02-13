@@ -47,36 +47,47 @@ body.theme-night {
     opacity: 1;
 }
 
-
 #heartOverlay {
     position: fixed;
     inset: 0;
     pointer-events: none;
-    z-index: 6;
+    z-index: 1;
     overflow: hidden;
+    opacity: 1;
+    transition: opacity 500ms ease;
 }
 
-.heart-burst {
-    position: absolute;
-    bottom: -24px;
-    color: rgba(255, 255, 255, 0.95);
-    font-size: 22px;
-    text-shadow: 0 0 8px rgba(255, 255, 255, 0.45);
+body.theme-night #heartOverlay {
     opacity: 0;
-    animation: floatHeart 1100ms ease-out forwards;
 }
 
-@keyframes floatHeart {
+.flow-heart {
+    position: fixed;
+    top: -14vh;
+    left: var(--start-x);
+    font-size: var(--heart-size);
+    line-height: 1;
+    color: var(--heart-color);
+    opacity: 0;
+    text-shadow: 0 0 12px rgba(255, 105, 180, 0.35);
+    transform: translate3d(-50%, 0, 0) rotate(var(--rotate-start));
+    animation: fallHeart var(--fall-duration) linear forwards;
+}
+
+@keyframes fallHeart {
     0% {
         opacity: 0;
-        transform: translate3d(0, 0, 0) scale(0.8);
+        transform: translate3d(-50%, -12vh, 0) rotate(var(--rotate-start)) scale(0.7);
     }
-    15% {
-        opacity: 1;
+    10% {
+        opacity: var(--heart-opacity);
+    }
+    90% {
+        opacity: var(--heart-opacity);
     }
     100% {
         opacity: 0;
-        transform: translate3d(var(--drift-x), -38vh, 0) scale(1.25);
+        transform: translate3d(calc(-50% + var(--drift-x)), 112vh, 0) rotate(var(--rotate-end)) scale(1.05);
     }
 }
 
