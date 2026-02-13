@@ -106,7 +106,6 @@ body.theme-night {
 }
 
 .buttons {
-    position: relative;
     display: flex;
     gap: 24px;
     align-items: center;
@@ -133,13 +132,16 @@ body.theme-night {
 }
 
 #noButton {
-    position: absolute;
-    left: 60%;
+    position: fixed;
+    left: calc(50% + 120px);
+    top: calc(50% + 190px);
+    transition: left 0.35s ease, top 0.35s ease, background-color 0.25s ease, transform 0.25s ease;
 }
 
 #yesButton {
-    position: absolute;
-    right: 60%;
+    position: fixed;
+    left: calc(50% - 220px);
+    top: calc(50% + 190px);
 }
 
 #endingView {

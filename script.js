@@ -63,7 +63,11 @@ function playIntroMessage() {
     }
 
     introText.textContent = introMessages[introIndex];
-    introText.classList.add("visible");
+    introText.classList.remove("visible");
+
+    requestAnimationFrame(function () {
+        introText.classList.add("visible");
+    });
 
     setTimeout(function () {
         introText.classList.remove("visible");
@@ -71,8 +75,8 @@ function playIntroMessage() {
         setTimeout(function () {
             introIndex += 1;
             playIntroMessage();
-        }, 650);
-    }, 2100);
+        }, 900);
+    }, 2800);
 }
 
 function moveNoButton() {
@@ -80,12 +84,12 @@ function moveNoButton() {
         return;
     }
 
-    var padding = 24;
+    var padding = 30;
     var maxX = window.innerWidth - noButton.offsetWidth - padding;
     var maxY = window.innerHeight - noButton.offsetHeight - padding;
 
-    var x = Math.max(padding, Math.random() * maxX);
-    var y = Math.max(padding, Math.random() * maxY);
+    var x = Math.max(padding, Math.random() * Math.max(maxX, padding));
+    var y = Math.max(padding, Math.random() * Math.max(maxY, padding));
 
     noButton.style.left = x + "px";
     noButton.style.top = y + "px";
@@ -248,5 +252,9 @@ window.addEventListener("resize", function () {
 
 setupCanvas();
 createStars();
-playIntroMessage();
+introText.classList.remove("visible");
+
+setTimeout(function () {
+    playIntroMessage();
+}, 250);
 requestAnimationFrame(loop);
