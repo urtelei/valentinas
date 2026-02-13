@@ -180,16 +180,21 @@ body.theme-night #heartOverlay {
 
 #noButton {
     position: fixed;
-    left: calc(50% + 120px);
+    left: calc(50% + 90px);
     top: calc(50% + 190px);
     transition: left 0.35s ease, top 0.35s ease, background-color 0.25s ease, transform 0.25s ease;
 }
 
 #yesButton {
     position: fixed;
-    left: calc(50% - 220px);
+    left: calc(50% - 190px);
     top: calc(50% + 190px);
 }
+
+#noButtonTwo {
+    transition: left 0.35s ease, top 0.35s ease, background-color 0.25s ease, transform 0.25s ease;
+}
+
 
 .proposal-two-buttons {
     position: relative;
