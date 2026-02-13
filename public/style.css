@@ -1,47 +1,23 @@
-:root {
-    --soft-white: rgba(245, 245, 240, 0.98);
-    --soft-border: rgba(245, 245, 240, 0.55);
-    --soft-bg: rgba(255, 255, 255, 0.08);
-    --safe-top: env(safe-area-inset-top, 0px);
-    --safe-right: env(safe-area-inset-right, 0px);
-    --safe-bottom: env(safe-area-inset-bottom, 0px);
-    --safe-left: env(safe-area-inset-left, 0px);
-}
-
-* {
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
-}
-
-html,
-body {
-    margin: 0;
-    width: 100%;
-    height: 100%;
+html, body {
+    margin: 0 !important;
+    padding: 0 !important;
     overflow: hidden;
-    background: #05060a;
     cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%23f5f5f0' d='M12 2.2l2.4 5 5.6.8-4 3.9.9 5.6-4.9-2.6-4.9 2.6.9-5.6-4-3.9 5.6-.8z'/%3E%3C/svg%3E") 12 12, auto;
 }
 
 body {
     position: relative;
-    min-height: 100vh;
-    min-height: 100svh;
-    min-height: 100dvh;
     font-family: "Trebuchet MS", "Avenir Next", "Segoe UI", sans-serif;
 }
 
-#starfield {
-    position: fixed;
-    inset: 0;
+canvas {
     width: 100%;
-    height: 100%;
-    display: block;
-    background: #07080f;
+    height: auto;
+    background: #111;
 }
 
 .overlay {
-    position: fixed;
+    position: absolute;
     inset: 0;
     display: flex;
     flex-direction: column;
@@ -51,13 +27,7 @@ body {
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    z-index: 3;
-    padding:
-        calc(var(--safe-top) + 20px)
-        calc(var(--safe-right) + 20px)
-        calc(var(--safe-bottom) + 20px)
-        calc(var(--safe-left) + 20px);
-    transition: opacity 550ms ease, visibility 550ms ease;
+    transition: opacity 700ms ease, visibility 700ms ease;
 }
 
 .overlay.show {
@@ -69,45 +39,42 @@ body {
 .overlay-text,
 .final-text {
     margin: 0;
+    color: rgba(245, 245, 240, 0.97);
     text-align: center;
-    color: var(--soft-white);
     text-shadow: 0 0 14px rgba(255, 255, 255, 0.7);
-    max-width: min(92vw, 560px);
-    line-height: 1.25;
+    padding: 0 20px;
 }
 
 .overlay-text {
-    font-size: clamp(20px, 6.8vw, 34px);
+    font-size: clamp(22px, 6vw, 36px);
 }
 
 .button-row {
     display: flex;
     gap: 12px;
-    flex-wrap: wrap;
-    justify-content: center;
 }
 
 .choice-button {
-    min-width: 88px;
-    padding: 12px 18px;
+    min-width: 86px;
+    padding: 12px 16px;
     border-radius: 999px;
-    border: 1px solid var(--soft-border);
-    background: var(--soft-bg);
-    color: var(--soft-white);
-    font-size: clamp(17px, 4.6vw, 20px);
+    border: 1px solid rgba(245, 245, 240, 0.55);
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(245, 245, 240, 0.97);
+    font-size: 18px;
     text-transform: lowercase;
     backdrop-filter: blur(2px);
-    transition: transform 260ms ease, background-color 260ms ease, border-color 260ms ease;
+    transition: transform 300ms ease, background-color 300ms ease, border-color 300ms ease;
 }
 
-.choice-button:active,
-.choice-button:hover {
-    background: rgba(255, 255, 255, 0.17);
+.choice-button:hover,
+.choice-button:active {
+    background: rgba(255, 255, 255, 0.16);
     border-color: rgba(245, 245, 240, 0.95);
 }
 
 .final-text {
-    font-size: clamp(24px, 7.6vw, 44px);
+    font-size: clamp(24px, 7vw, 44px);
     letter-spacing: 0.08em;
     font-weight: 700;
     text-transform: uppercase;
