@@ -1,15 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta property="og:image" content="https://raw.githubusercontent.com/sojijr/valentine-website/main/public/images/favicon.png">
-    <link rel="icon" href="public/images/favicon.png" type="image/x-icon" />  
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      property="og:image"
+      content="https://raw.githubusercontent.com/sojijr/valentine-website/main/public/images/favicon.png"
+    />
+    <link rel="icon" href="public/images/favicon.png" type="image/x-icon" />
     <title>Happy Valentine's Day</title>
-    <link rel="stylesheet" href="public/style.css">
+    <link rel="stylesheet" href="public/style.css" />
   </head>
-  <body>
-    <canvas id="starfield"></canvas>
+  <body class="theme-proposal">
+    <canvas id="starfield" aria-hidden="true"></canvas>
+
+    <section id="introView" class="view show" aria-live="polite">
+      <p id="introText" class="intro-text"></p>
+    </section>
+
+    <section id="proposalView" class="view hidden" aria-hidden="true">
+      <h1 class="header-text">Will you be my valentine? hehe</h1>
+      <div class="gif-wrap">
+        <img
+          src="https://64.media.tumblr.com/44437aaa3af65ef5b5dc25b2cf1e81d1/6acc7d78ea83e207-45/s400x600/5b30035952803850ed3136fbe760ceff97ee8d19.gif"
+          alt="Cute animated illustration"
+        />
+      </div>
+      <div class="buttons">
+        <button id="yesButton" class="btn" type="button">Yes</button>
+        <button id="noButton" class="btn" type="button">No</button>
+      </div>
+    </section>
+
+    <section id="endingView" class="view hidden" aria-hidden="true">
+      <p class="ending-text">YOU ARE MY FAVORITE PERSON IN EVERY UNIVERSE.</p>
+    </section>
+
     <script src="script.js"></script>
   </body>
 </html>
