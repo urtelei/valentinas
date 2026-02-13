@@ -44,7 +44,7 @@ var celebrationTwoMessages = [
 
 var storyLines = [
     "amongst trillions and trillions of stars, over billions of years",
-    "to be alive, and to get to spend this life with you",
+    "to be alive, Ćand to get to spend this life with you",
     "is so incredibly, unfathomably unlikely",
     "and yet here we are, writing our own impossible story",
     "Happy Valentine's Day <3"
@@ -392,9 +392,9 @@ function drawNightStory(delta) {
     context.shadowColor = "rgba(255, 190, 245, 0.8)";
     context.shadowBlur = 16;
 
-    var fadeIn = 0.9;
-    var hold = 1.8;
-    var fadeOut = 0.9;
+    var fadeIn = 1.2;
+    var hold = 2.3;
+    var fadeOut = 1.2;
     var segment = fadeIn + hold + fadeOut;
 
     for (var i = 0; i < storyLines.length; i++) {
