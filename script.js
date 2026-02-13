@@ -26,9 +26,22 @@ var celebrationTwoText = document.getElementById("celebrationTwoText");
 var endingView = document.getElementById("endingView");
 
 var introMessages = [
-    "Every love story starts with one unforgettable hello.",
-    "And somehow, every day with you still feels brand new.",
-    "So before the stars take over, I need to ask you something..."
+    "Helleuu mano mieloji Urtele😘❤️",
+    "Kaip tu laikaisi?",
+    "Ar pavalgius??😇",
+    "Ar pailsėjus??🤔",
+    "Tikiuosi viskas gerai🥰",
+    "....",
+    "Kartais pamirštu kaip greit laikas bėga",
+    "Jau kiek laiko praleista kartu",
+    "Kiek jaukių ir smagių date'ų🥰",
+    "Kiek nuotykių, įspūdžių patirtų kartu😍",
+    "O aš iki dabar randu naujų jausmų...",
+    "Naujų būdų pamilt tave vis labiau ir labiau😘❤️",
+    "Visgi atėjo ta 14-ta diena...",
+    "(Mūsų pirmoji🥳)",
+    "Todėl prieš mums pradedant, svarbiausi klausimai😉"
+    
 ];
 
 var celebrationMessages = [
