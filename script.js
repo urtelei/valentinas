@@ -12,6 +12,9 @@ var noButton = document.getElementById("noButton");
 var celebrationView = document.getElementById("celebrationView");
 var celebrationText = document.getElementById("celebrationText");
 
+var messageView = document.getElementById("messageView");
+var messageViewText = document.getElementById("messageViewText");
+
 var proposalTwoView = document.getElementById("proposalTwoView");
 var yesButtonTwo = document.getElementById("yesButtonTwo");
 var noButtonTwo = document.getElementById("noButtonTwo");
@@ -105,6 +108,31 @@ function playMessageSequence(textElement, messages, onDone) {
     showIndex(0);
 }
 
+function showSingleCelebration(view, textElement, message, onDone) {
+    showView(view);
+    textElement.textContent = message;
+    textElement.classList.remove("visible");
+
+    requestAnimationFrame(function () {
+        textElement.classList.add("visible");
+    });
+
+    setTimeout(function () {
+        textElement.classList.remove("visible");
+
+        setTimeout(function () {
+            hideView(view, onDone);
+        }, 900);
+    }, 2800);
+}
+
+function showStandaloneMessages(messages, onDone) {
+    showView(messageView);
+    playMessageSequence(messageViewText, messages, function () {
+        hideView(messageView, onDone);
+    });
+}
+
 function startIntroFlow() {
     playMessageSequence(introText, introMessages, function () {
         hideView(introView, function () {
@@ -134,14 +162,17 @@ function startCelebrationOne() {
     scene = "celebration-1";
 
     hideView(proposalView, function () {
-        showView(celebrationView);
-
-        playMessageSequence(celebrationText, celebrationMessages, function () {
-            hideView(celebrationView, function () {
-                scene = "proposal-2";
-                showView(proposalTwoView);
-            });
-        });
+        showSingleCelebration(
+            celebrationView,
+            celebrationText,
+            celebrationMessages[0],
+            function () {
+                showStandaloneMessages(celebrationMessages.slice(1), function () {
+                    scene = "proposal-2";
+                    showView(proposalTwoView);
+                });
+            }
+        );
     });
 }
 
@@ -165,19 +196,21 @@ function startCelebrationTwo() {
     scene = "celebration-2";
 
     hideView(proposalTwoView, function () {
-        showView(celebrationTwoView);
-
-        playMessageSequence(celebrationTwoText, celebrationTwoMessages, function () {
-            body.classList.remove("theme-proposal");
-            body.classList.add("theme-night");
-
-            hideView(celebrationTwoView, function () {
-                canvas.classList.add("active");
-                scene = "night-fade";
-                storyTime = 0;
-                nightFadeTimer = 0;
-            });
-        });
+        showSingleCelebration(
+            celebrationTwoView,
+            celebrationTwoText,
+            celebrationTwoMessages[0],
+            function () {
+                showStandaloneMessages(celebrationTwoMessages.slice(1), function () {
+                    body.classList.remove("theme-proposal");
+                    body.classList.add("theme-night");
+                    canvas.classList.add("active");
+                    scene = "night-fade";
+                    storyTime = 0;
+                    nightFadeTimer = 0;
+                });
+            }
+        );
     });
 }
 
