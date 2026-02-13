@@ -4,11 +4,21 @@ var context = canvas.getContext("2d");
 
 var introView = document.getElementById("introView");
 var introText = document.getElementById("introText");
+
 var proposalView = document.getElementById("proposalView");
-var celebrationView = document.getElementById("celebrationView");
-var celebrationText = document.getElementById("celebrationText");
 var yesButton = document.getElementById("yesButton");
 var noButton = document.getElementById("noButton");
+
+var celebrationView = document.getElementById("celebrationView");
+var celebrationText = document.getElementById("celebrationText");
+
+var proposalTwoView = document.getElementById("proposalTwoView");
+var yesButtonTwo = document.getElementById("yesButtonTwo");
+var noButtonTwo = document.getElementById("noButtonTwo");
+
+var celebrationTwoView = document.getElementById("celebrationTwoView");
+var celebrationTwoText = document.getElementById("celebrationTwoText");
+
 var endingView = document.getElementById("endingView");
 
 var introMessages = [
@@ -23,17 +33,10 @@ var celebrationMessages = [
     "Now come with me, the stars have something to say..."
 ];
 
-var introIndex = 0;
-var stars = 520;
-var starArray = [];
-var dpr = 1;
-var width = window.innerWidth;
-var height = window.innerHeight;
-
-var scene = "intro";
-var storyTime = 0;
-var nightFadeTimer = 0;
-var nightTextDelay = 1.5;
+var celebrationTwoMessages = [
+    "That was the easiest yes in history.",
+    "Okay, one last sky-full confession for you..."
+];
 
 var storyLines = [
     "amongst trillions and trillions of stars, over billions of years",
@@ -42,6 +45,18 @@ var storyLines = [
     "and yet here we are, writing our own impossible story",
     "Happy Valentine's Day <3"
 ];
+
+var stars = 520;
+var starArray = [];
+var dpr = 1;
+var width = window.innerWidth;
+var height = window.innerHeight;
+var scene = "intro";
+var storyTime = 0;
+var nightFadeTimer = 0;
+var nightTextDelay = 1.5;
+var yesTwoScale = 1;
+var noTwoScale = 1;
 
 function showView(view) {
     view.classList.remove("hidden");
@@ -63,34 +78,44 @@ function hideView(view, callback) {
     }, 500);
 }
 
-function playIntroMessage() {
-    if (introIndex >= introMessages.length) {
-        hideView(introView, function () {
-            showView(proposalView);
-            scene = "proposal";
+function playMessageSequence(textElement, messages, onDone) {
+    function showIndex(index) {
+        if (index >= messages.length) {
+            textElement.classList.remove("visible");
+            onDone();
+            return;
+        }
+
+        textElement.textContent = messages[index];
+        textElement.classList.remove("visible");
+
+        requestAnimationFrame(function () {
+            textElement.classList.add("visible");
         });
-        return;
-    }
-
-    introText.textContent = introMessages[introIndex];
-    introText.classList.remove("visible");
-
-    requestAnimationFrame(function () {
-        introText.classList.add("visible");
-    });
-
-    setTimeout(function () {
-        introText.classList.remove("visible");
 
         setTimeout(function () {
-            introIndex += 1;
-            playIntroMessage();
-        }, 900);
-    }, 2800);
+            textElement.classList.remove("visible");
+
+            setTimeout(function () {
+                showIndex(index + 1);
+            }, 900);
+        }, 2800);
+    }
+
+    showIndex(0);
+}
+
+function startIntroFlow() {
+    playMessageSequence(introText, introMessages, function () {
+        hideView(introView, function () {
+            scene = "proposal-1";
+            showView(proposalView);
+        });
+    });
 }
 
 function moveNoButton() {
-    if (scene !== "proposal") {
+    if (scene !== "proposal-1") {
         return;
     }
 
@@ -105,41 +130,54 @@ function moveNoButton() {
     noButton.style.top = y + "px";
 }
 
-function playCelebrationMessages(index) {
-    if (index >= celebrationMessages.length) {
-        body.classList.remove("theme-proposal");
-        body.classList.add("theme-night");
+function startCelebrationOne() {
+    scene = "celebration-1";
 
-        hideView(celebrationView, function () {
-            canvas.classList.add("active");
-            scene = "night-fade";
-            storyTime = 0;
-            nightFadeTimer = 0;
+    hideView(proposalView, function () {
+        showView(celebrationView);
+
+        playMessageSequence(celebrationText, celebrationMessages, function () {
+            hideView(celebrationView, function () {
+                scene = "proposal-2";
+                showView(proposalTwoView);
+            });
         });
+    });
+}
+
+function onNoButtonTwoClick() {
+    if (scene !== "proposal-2") {
         return;
     }
 
-    celebrationText.textContent = celebrationMessages[index];
-    celebrationText.classList.remove("visible");
+    yesTwoScale = Math.min(1.75, yesTwoScale + 0.06);
+    noTwoScale = Math.max(0.45, noTwoScale - 0.05);
 
-    requestAnimationFrame(function () {
-        celebrationText.classList.add("visible");
-    });
-
-    setTimeout(function () {
-        celebrationText.classList.remove("visible");
-
-        setTimeout(function () {
-            playCelebrationMessages(index + 1);
-        }, 900);
-    }, 2600);
+    yesButtonTwo.style.transform = "scale(" + yesTwoScale + ")";
+    noButtonTwo.style.transform = "scale(" + noTwoScale + ")";
 }
 
-function startNightScene() {
-    hideView(proposalView, function () {
-        showView(celebrationView);
-        scene = "celebration";
-        playCelebrationMessages(0);
+function startCelebrationTwo() {
+    if (scene !== "proposal-2") {
+        return;
+    }
+
+    scene = "celebration-2";
+
+    hideView(proposalTwoView, function () {
+        showView(celebrationTwoView);
+
+        playMessageSequence(celebrationTwoText, celebrationTwoMessages, function () {
+            body.classList.remove("theme-proposal");
+            body.classList.add("theme-night");
+
+            hideView(celebrationTwoView, function () {
+                canvas.classList.add("active");
+                scene = "night-fade";
+                storyTime = 0;
+                nightFadeTimer = 0;
+            });
+        });
     });
 }
 
@@ -289,7 +327,10 @@ function loop(now) {
 
 noButton.addEventListener("mouseenter", moveNoButton);
 noButton.addEventListener("click", moveNoButton);
-yesButton.addEventListener("click", startNightScene);
+yesButton.addEventListener("click", startCelebrationOne);
+
+noButtonTwo.addEventListener("click", onNoButtonTwoClick);
+yesButtonTwo.addEventListener("click", startCelebrationTwo);
 
 window.addEventListener("resize", function () {
     setupCanvas();
@@ -298,9 +339,9 @@ window.addEventListener("resize", function () {
 
 setupCanvas();
 createStars();
-introText.classList.remove("visible");
 
 setTimeout(function () {
-    playIntroMessage();
+    startIntroFlow();
 }, 250);
+
 requestAnimationFrame(loop);

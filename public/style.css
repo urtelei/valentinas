@@ -147,6 +147,14 @@ body.theme-night {
     top: calc(50% + 190px);
 }
 
+.proposal-two-buttons {
+    position: relative;
+}
+
+.proposal-two-buttons .btn {
+    position: static;
+}
+
 #endingView {
     background: radial-gradient(circle at center, rgba(255, 221, 248, 0.18), rgba(3, 6, 24, 0.18));
 }
