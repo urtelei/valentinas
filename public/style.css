@@ -47,6 +47,39 @@ body.theme-night {
     opacity: 1;
 }
 
+
+#heartOverlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 6;
+    overflow: hidden;
+}
+
+.heart-burst {
+    position: absolute;
+    bottom: -24px;
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 22px;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.45);
+    opacity: 0;
+    animation: floatHeart 1100ms ease-out forwards;
+}
+
+@keyframes floatHeart {
+    0% {
+        opacity: 0;
+        transform: translate3d(0, 0, 0) scale(0.8);
+    }
+    15% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translate3d(var(--drift-x), -38vh, 0) scale(1.25);
+    }
+}
+
 .view {
     position: fixed;
     inset: 0;

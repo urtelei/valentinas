@@ -1,6 +1,7 @@
 var body = document.body;
 var canvas = document.getElementById("starfield");
 var context = canvas.getContext("2d");
+var heartOverlay = document.getElementById("heartOverlay");
 
 var introView = document.getElementById("introView");
 var introText = document.getElementById("introText");
@@ -27,9 +28,7 @@ var endingView = document.getElementById("endingView");
 var introMessages = [
     "Every love story starts with one unforgettable hello.",
     "And somehow, every day with you still feels brand new.",
-    "So before the stars take over, I need to ask you something...",
-    "So before the stsfdsdfmething...",
-    "So before the stars take over, I need to ask you asd"
+    "So before the stars take over, I need to ask you something..."
 ];
 
 var celebrationMessages = [
@@ -110,6 +109,7 @@ function playMessageSequence(textElement, messages, onDone) {
     showIndex(0);
 }
 
+
 function showSingleCelebration(view, textElement, message, onDone) {
     showView(view);
     textElement.textContent = message;
@@ -132,6 +132,41 @@ function showStandaloneMessages(messages, onDone) {
     showView(messageView);
     playMessageSequence(messageViewText, messages, function () {
         hideView(messageView, onDone);
+    });
+}
+
+function triggerHeartBurst() {
+    if (!heartOverlay) {
+        return Promise.resolve();
+    }
+
+    var heartCount = 14;
+    for (var i = 0; i < heartCount; i++) {
+        var heart = document.createElement("span");
+        heart.className = "heart-burst";
+        heart.textContent = Math.random() > 0.5 ? "❤" : "♡";
+
+        var left = 12 + Math.random() * 76;
+        var drift = (Math.random() * 120 - 60).toFixed(0) + "px";
+        var delay = Math.floor(Math.random() * 160);
+        var size = 18 + Math.random() * 20;
+
+        heart.style.left = left + "%";
+        heart.style.setProperty("--drift-x", drift);
+        heart.style.animationDelay = delay + "ms";
+        heart.style.fontSize = size + "px";
+
+        heartOverlay.appendChild(heart);
+
+        setTimeout(function (node) {
+            if (node && node.parentNode) {
+                node.parentNode.removeChild(node);
+            }
+        }, 1300 + delay, heart);
+    }
+
+    return new Promise(function (resolve) {
+        setTimeout(resolve, 420);
     });
 }
 
@@ -160,8 +195,9 @@ function moveNoButton() {
     noButton.style.top = y + "px";
 }
 
-function startCelebrationOne() {
+async function startCelebrationOne() {
     scene = "celebration-1";
+    await triggerHeartBurst();
 
     hideView(proposalView, function () {
         showSingleCelebration(
@@ -190,12 +226,13 @@ function onNoButtonTwoClick() {
     noButtonTwo.style.transform = "scale(" + noTwoScale + ")";
 }
 
-function startCelebrationTwo() {
+async function startCelebrationTwo() {
     if (scene !== "proposal-2") {
         return;
     }
 
     scene = "celebration-2";
+    await triggerHeartBurst();
 
     hideView(proposalTwoView, function () {
         showSingleCelebration(
