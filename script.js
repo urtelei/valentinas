@@ -27,7 +27,9 @@ var endingView = document.getElementById("endingView");
 var introMessages = [
     "Every love story starts with one unforgettable hello.",
     "And somehow, every day with you still feels brand new.",
-    "So before the stars take over, I need to ask you something..."
+    "So before the stars take over, I need to ask you something...",
+    "So before the stsfdsdfmething...",
+    "So before the stars take over, I need to ask you asd"
 ];
 
 var celebrationMessages = [
