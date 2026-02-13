@@ -5,6 +5,8 @@ var context = canvas.getContext("2d");
 var introView = document.getElementById("introView");
 var introText = document.getElementById("introText");
 var proposalView = document.getElementById("proposalView");
+var celebrationView = document.getElementById("celebrationView");
+var celebrationText = document.getElementById("celebrationText");
 var yesButton = document.getElementById("yesButton");
 var noButton = document.getElementById("noButton");
 var endingView = document.getElementById("endingView");
@@ -13,6 +15,12 @@ var introMessages = [
     "Every love story starts with one unforgettable hello.",
     "And somehow, every day with you still feels brand new.",
     "So before the stars take over, I need to ask you something..."
+];
+
+var celebrationMessages = [
+    "You just made my whole universe brighter.",
+    "I promise to keep choosing you in every season.",
+    "Now come with me, the stars have something to say..."
 ];
 
 var introIndex = 0;
@@ -24,6 +32,8 @@ var height = window.innerHeight;
 
 var scene = "intro";
 var storyTime = 0;
+var nightFadeTimer = 0;
+var nightTextDelay = 1.5;
 
 var storyLines = [
     "amongst trillions and trillions of stars, over billions of years",
@@ -95,13 +105,41 @@ function moveNoButton() {
     noButton.style.top = y + "px";
 }
 
-function startNightScene() {
-    body.classList.remove("theme-proposal");
-    body.classList.add("theme-night");
+function playCelebrationMessages(index) {
+    if (index >= celebrationMessages.length) {
+        body.classList.remove("theme-proposal");
+        body.classList.add("theme-night");
 
+        hideView(celebrationView, function () {
+            canvas.classList.add("active");
+            scene = "night-fade";
+            storyTime = 0;
+            nightFadeTimer = 0;
+        });
+        return;
+    }
+
+    celebrationText.textContent = celebrationMessages[index];
+    celebrationText.classList.remove("visible");
+
+    requestAnimationFrame(function () {
+        celebrationText.classList.add("visible");
+    });
+
+    setTimeout(function () {
+        celebrationText.classList.remove("visible");
+
+        setTimeout(function () {
+            playCelebrationMessages(index + 1);
+        }, 900);
+    }, 2600);
+}
+
+function startNightScene() {
     hideView(proposalView, function () {
-        canvas.classList.add("active");
-        scene = "night-story";
+        showView(celebrationView);
+        scene = "celebration";
+        playCelebrationMessages(0);
     });
 }
 
@@ -191,11 +229,19 @@ function getAlpha(localTime, fadeIn, hold, fadeOut) {
 }
 
 function drawNightStory(delta) {
-    storyTime += delta;
-
     context.clearRect(0, 0, width, height);
     drawStars();
     updateStars();
+
+    if (scene === "night-fade") {
+        nightFadeTimer += delta;
+        if (nightFadeTimer >= nightTextDelay) {
+            scene = "night-story";
+        }
+        return;
+    }
+
+    storyTime += delta;
 
     context.font = "600 " + Math.max(30, Math.min(48, width / 28)) + "px 'Trebuchet MS', 'Avenir Next', sans-serif";
     context.textAlign = "center";
@@ -234,7 +280,7 @@ function loop(now) {
     var delta = Math.min(0.05, (now - lastTime) / 1000);
     lastTime = now;
 
-    if (scene === "night-story") {
+    if (scene === "night-fade" || scene === "night-story") {
         drawNightStory(delta);
     }
 
