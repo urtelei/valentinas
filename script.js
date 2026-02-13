@@ -37,6 +37,7 @@ var introMessages = [
     "Kiek jaukių ir smagių date'ų🥰",
     "Kiek nuotykių, įspūdžių patirtų kartu😍",
     "O aš iki dabar randu naujų jausmų...",
+
     "Naujų būdų pamilt tave vis labiau ir labiau😘❤️",
     "Visgi atėjo ta 14-ta diena...",
     "(Mūsų pirmoji🥳)",
