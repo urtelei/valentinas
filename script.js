@@ -28,13 +28,13 @@ var endingView = document.getElementById("endingView");
 var introMessages = [
     "Helleuu mano mieloji Urtele😘❤️",
     "Kaip tu laikaisi?",
-    "Ar pavalgius??😇",
+    "Ar pavalgius??",
     "Ar pailsėjus??🤔",
     "Tikiuosi viskas gerai🥰",
-    "....",
+    " ",
     "Kartais pamirštu kaip greit laikas bėga",
     "Jau kiek laiko praleista kartu",
-    "Kiek jaukių ir smagių date'ų🥰",
+    "Kiek jaukių ir smagių pasimatymų🥰",
     "Kiek nuotykių, įspūdžių patirtų kartu😍",
     "O aš iki dabar randu naujų jausmų...",
 
@@ -73,8 +73,8 @@ var scene = "intro";
 var storyTime = 0;
 var nightFadeTimer = 0;
 var nightTextDelay = 1.5;
-var yesTwoScale = 1;
-var noTwoScale = 1;
+var yesOneScale = 1;
+var noOneScale = 1;
 var heartFlowTimer = null;
 
 function showView(view) {
@@ -223,26 +223,58 @@ function startIntroFlow() {
     playMessageSequence(introText, introMessages, function () {
         hideView(introView, function () {
             scene = "proposal-1";
+            yesOneScale = 1;
+            noOneScale = 1;
+            yesButton.style.transform = "scale(1)";
+            noButton.style.transform = "scale(1)";
             showView(proposalView);
         });
     });
 }
 
-function moveNoButton() {
+function onNoButtonOneClick() {
     if (scene !== "proposal-1") {
         return;
     }
 
+    yesOneScale = Math.min(1.75, yesOneScale + 0.06);
+    noOneScale = Math.max(0.45, noOneScale - 0.05);
+
+    yesButton.style.transform = "scale(" + yesOneScale + ")";
+    noButton.style.transform = "scale(" + noOneScale + ")";
+}
+
+function setProposalTwoButtonLayout() {
+    yesButtonTwo.style.position = "fixed";
+    noButtonTwo.style.position = "fixed";
+
+    yesButtonTwo.style.left = "calc(50% - 220px)";
+    yesButtonTwo.style.top = "calc(50% + 190px)";
+
+    if (!noButtonTwo.style.left) {
+        noButtonTwo.style.left = "calc(50% + 120px)";
+        noButtonTwo.style.top = "calc(50% + 190px)";
+    }
+}
+
+function moveNoButtonTwo() {
+    if (scene !== "proposal-2") {
+        return;
+    }
+
     var padding = 30;
-    var maxX = window.innerWidth - noButton.offsetWidth - padding;
-    var maxY = window.innerHeight - noButton.offsetHeight - padding;
+    var maxX = window.innerWidth - noButtonTwo.offsetWidth - padding;
+    var maxY = window.innerHeight - noButtonTwo.offsetHeight - padding;
 
     var x = Math.max(padding, Math.random() * Math.max(maxX, padding));
     var y = Math.max(padding, Math.random() * Math.max(maxY, padding));
 
-    noButton.style.left = x + "px";
-    noButton.style.top = y + "px";
+    noButtonTwo.style.left = x + "px";
+    noButtonTwo.style.top = y + "px";
 }
+
+
+
 
 function startCelebrationOne() {
     scene = "celebration-1";
@@ -255,23 +287,13 @@ function startCelebrationOne() {
             function () {
                 showStandaloneMessages(celebrationMessages.slice(1), function () {
                     scene = "proposal-2";
+                    setProposalTwoButtonLayout();
                     showView(proposalTwoView);
+
                 });
             }
         );
     });
-}
-
-function onNoButtonTwoClick() {
-    if (scene !== "proposal-2") {
-        return;
-    }
-
-    yesTwoScale = Math.min(1.75, yesTwoScale + 0.06);
-    noTwoScale = Math.max(0.45, noTwoScale - 0.05);
-
-    yesButtonTwo.style.transform = "scale(" + yesTwoScale + ")";
-    noButtonTwo.style.transform = "scale(" + noTwoScale + ")";
 }
 
 function startCelebrationTwo() {
@@ -445,17 +467,22 @@ function loop(now) {
     requestAnimationFrame(loop);
 }
 
-noButton.addEventListener("mouseenter", moveNoButton);
-noButton.addEventListener("click", moveNoButton);
+noButton.addEventListener("click", onNoButtonOneClick);
 yesButton.addEventListener("click", startCelebrationOne);
 
-noButtonTwo.addEventListener("click", onNoButtonTwoClick);
+noButtonTwo.addEventListener("mouseenter", moveNoButtonTwo);
+noButtonTwo.addEventListener("click", moveNoButtonTwo);
 yesButtonTwo.addEventListener("click", startCelebrationTwo);
 
 window.addEventListener("resize", function () {
     setupCanvas();
     createStars();
+
+    if (scene === "proposal-2") {
+        setProposalTwoButtonLayout();
+    }
 });
+
 
 setupCanvas();
 createStars();
