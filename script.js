@@ -9,6 +9,10 @@ var introText = document.getElementById("introText");
 var proposalView = document.getElementById("proposalView");
 var yesButton = document.getElementById("yesButton");
 var noButton = document.getElementById("noButton");
+var proposalOneGif = document.getElementById("proposalOneGif");
+var proposalOneGifDefault = "https://64.media.tumblr.com/44437aaa3af65ef5b5dc25b2cf1e81d1/6acc7d78ea83e207-45/s400x600/5b30035952803850ed3136fbe760ceff97ee8d19.gif";
+var proposalOneGifAfterSixNo = "https://media.tenor.com/Qu6GUg0Yx90AAAAi/mocha-cry.gif";
+var proposalOneGifAfterMuchNo = "https://media.tenor.com/p3wTssf4xRgAAAAi/bubu-bubu-sad.gif"
 
 var celebrationView = document.getElementById("celebrationView");
 var celebrationText = document.getElementById("celebrationText");
@@ -26,6 +30,7 @@ var celebrationTwoText = document.getElementById("celebrationTwoText");
 var endingView = document.getElementById("endingView");
 
 var introMessages = [
+    "  ",
     "Helleuu mano mieloji Urtele😘❤️",
     "Kaip tu laikaisi?",
     "Ar pavalgius??🤔",
@@ -41,13 +46,16 @@ var introMessages = [
     "Visgi atėjo ta 14-ta diena...",
     "(Mūsų pirmoji🥳)",
     "Todėl prieš mums pradedant, svarbiausi klausimai😉"
-    
 ];
 
 var celebrationMessages = [
-    "You just made my whole universe brighter.",
-    "I promise to keep choosing you in every season.",
-    "Now come with me, the stars have something to say..."
+    "Esu pats laiminingiausias žmogus visoje visatoje😭",
+    "Visą savo likusį gyvenimą atsiminsių tą lemtingą Gegužės naktį...",
+    "...kuri apvertė mano gyvenimą aukštyn kojom",
+    "Nuo tos dienos visas mano pasaulis yra gražesnis, ryškesnis...",
+    "ir įgavęs dar mano akimis nematytų spalvų🥰",
+    "Visgi, kad ir stipriai kasdien jaučiu tavo meilę ir šilumą...",
+    "Faktus pripažinkime😉🥰..."
 ];
 
 var celebrationTwoMessages = [
@@ -71,9 +79,10 @@ var height = window.innerHeight;
 var scene = "intro";
 var storyTime = 0;
 var nightFadeTimer = 0;
-var nightTextDelay = 1.5;
+var nightTextDelay = 1.8;
 var yesOneScale = 1;
 var noOneScale = 1;
+var proposalOneNoClicks = 0;
 var heartFlowTimer = null;
 
 function showView(view) {
@@ -226,6 +235,10 @@ function startIntroFlow() {
             noOneScale = 1;
             yesButton.style.transform = "scale(1)";
             noButton.style.transform = "scale(1)";
+            proposalOneNoClicks = 0;
+            if (proposalOneGif) {
+                proposalOneGif.src = proposalOneGifDefault;
+            }
             showView(proposalView);
         });
     });
@@ -236,11 +249,26 @@ function onNoButtonOneClick() {
         return;
     }
 
-    yesOneScale = Math.min(1.75, yesOneScale + 0.06);
-    noOneScale = Math.max(0.45, noOneScale - 0.05);
+    proposalOneNoClicks += 1;
+
+    // Increasing growth step each click: 0.06, 0.08, 0.10, ...
+    var growthStep = 0.06 + (proposalOneNoClicks - 1) * 0.02;
+    yesOneScale = Math.min(2.8, yesOneScale + growthStep);
+
+    // Keep "Ne" shrinking a little each click
+    noOneScale = Math.max(0.35, noOneScale - 0.05);
 
     yesButton.style.transform = "scale(" + yesOneScale + ")";
     noButton.style.transform = "scale(" + noOneScale + ")";
+
+    // After more than 6 clicks, switch gif
+    if (proposalOneNoClicks > 6 && proposalOneGif) {
+        proposalOneGif.src = proposalOneGifAfterSixNo;
+    }
+    if (proposalOneNoClicks > 12 && proposalOneGif) {
+        proposalOneGif.src = proposalOneGifAfterMuchNo;
+    }
+
 }
 
 function setProposalTwoButtonLayout() {
@@ -432,7 +460,7 @@ function drawNightStory(delta) {
     var fadeOut = 1.2;
     var segment = fadeIn + hold + fadeOut;
 
-    for (var i = 0; i < storyLines.length; i++) {
+    for (var i = 0; i < 2; i++) {
         var local = storyTime - i * segment;
         var alpha = getAlpha(local, fadeIn, hold, fadeOut);
 
@@ -440,14 +468,40 @@ function drawNightStory(delta) {
             continue;
         }
 
-        var yOffset = i >= 3 ? (i - 2) * 70 : 0;
         context.fillStyle = "rgba(248, 240, 255, " + alpha + ")";
-        drawWrappedLine(storyLines[i], width / 2, height / 2 + yOffset, width * 0.78, 56);
+        drawWrappedLine(storyLines[i], width / 2, height / 2, width * 0.78, 56);
+    }
+
+    var groupStart = 2 * segment;
+    var groupLocalTime = storyTime - groupStart;
+    var stackStagger = 1.2;
+    var stackHold = hold;
+
+    if (groupLocalTime > 0) {
+        var stackFadeStart = stackStagger * 2 + stackHold;
+        var groupFadeAlpha = 1;
+
+        if (groupLocalTime > stackFadeStart) {
+            groupFadeAlpha = Math.max(0, 1 - ((groupLocalTime - stackFadeStart) / fadeOut));
+        }
+
+        var lineThreeAlpha = Math.min(1, groupLocalTime / fadeIn) * groupFadeAlpha;
+        var lineFourAlpha = Math.min(1, Math.max(0, (groupLocalTime - stackStagger) / fadeIn)) * groupFadeAlpha;
+        var lineFiveAlpha = Math.min(1, Math.max(0, (groupLocalTime - stackStagger * 2) / fadeIn)) * groupFadeAlpha;
+
+        context.fillStyle = "rgba(248, 240, 255, " + lineThreeAlpha + ")";
+        drawWrappedLine(storyLines[2], width / 2, height / 2, width * 0.78, 56);
+
+        context.fillStyle = "rgba(248, 240, 255, " + lineFourAlpha + ")";
+        drawWrappedLine(storyLines[3], width / 2, height / 2 + 70, width * 0.78, 56);
+
+        context.fillStyle = "rgba(248, 240, 255, " + lineFiveAlpha + ")";
+        drawWrappedLine(storyLines[4], width / 2, height / 2 + 140, width * 0.78, 56);
     }
 
     context.shadowBlur = 0;
 
-    var fullDuration = storyLines.length * segment + 0.8;
+    var fullDuration = groupStart + (stackStagger * 2) + stackHold + fadeOut + 0.8;
     if (storyTime >= fullDuration) {
         scene = "ending";
         showView(endingView);
