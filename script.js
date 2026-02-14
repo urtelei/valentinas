@@ -49,26 +49,48 @@ var introMessages = [
 ];
 
 var celebrationMessages = [
-    "Esu pats laiminingiausias žmogus visoje visatoje😭",
+    "Esu pats laiminingiausias vaikinas visoje visatoje😭",
     "Visą savo likusį gyvenimą atsiminsių tą lemtingą Gegužės naktį...",
     "...kuri apvertė mano gyvenimą aukštyn kojom",
     "Nuo tos dienos visas mano pasaulis yra gražesnis, ryškesnis...",
-    "ir įgavęs dar mano akimis nematytų spalvų🥰",
+    "Ir įgavęs dar nematytų spalvų🥰",
     "Visgi, kad ir stipriai kasdien jaučiu tavo meilę ir šilumą...",
-    "Faktus pripažinkime😉🥰..."
+    "Faktus pripažinkime😉❤️..."
 ];
 
 var celebrationTwoMessages = [
-    "That was the easiest yes in history.",
-    "Okay, one last sky-full confession for you..."
+    "Labai teisingai mano meile😘🥰",
+    "Bet jeigu rimtai...",
+    "Myliu tave, mano Urtele❤️",
+    "Myliu tave labiau nei gali įsivaizduoti...",
+    "Esi man neapsakomai brangi",
+    "Ir toliau su kiekviena diena...",
+    "Su kiekviena valanda...",
+    "Su kiekvienu momentu kartu ar ne...",
+    "Visą likusį savo gyvenimą...",
+    "Mylėsiu tave vis stipriau ir stipriau🥰",
+    "Galėčiau kiauras dienas pasakoti kaip stipriai myliu tave",
+    "Bet prieš mums baigiant, dar vieną kartą..."
 ];
 
 var storyLines = [
-    "amongst trillions and trillions of stars, over billions of years",
-    "to be alive, Ćand to get to spend this life with you",
-    "is so incredibly, unfathomably unlikely",
-    "and yet here we are, writing our own impossible story",
-    "Happy Valentine's Day <3"
+    "Tarp trilijonų žvaigždžių ir milijardų metų",
+    "Būti čia ir dalintis šiuo gyvenimu su tavimi",
+    "Atrodo neįtikėtinai reta dovana",
+    "Kiekviena diena su tavimi man primena stebuklą...",
+    "Svajonę, kuri išsipildė pamačius krentančią žvaigždę",
+    "Tavo šypsena nuramina net garsiausias mano mintis",
+    "Tavo artumas paverčia paprastas akimirkas ypatingomis",
+    "Tavo akys žiba ryškiau nei pačios ryškiausios žvaigždės",
+    "Tavo prisilietimas sušildo net šalčiausią mano dieną",
+    "Tavo balsas - man gražiausia melodija",
+    "Su tavimi net tylos akimirkos yra nepamirštami prisiminimai",
+    "Tu esi mano ramybė, mano jaukumas, mano namai",
+    "Mano pasaulis",
+    "Mano visata",
+    "Mano viskas...",
+    "Myliu tave, mano meile❤️",
+    "Myliu tave amžiams🥰"
 ];
 
 var stars = 520;
@@ -126,7 +148,7 @@ function playMessageSequence(textElement, messages, onDone) {
             setTimeout(function () {
                 showIndex(index + 1);
             }, 900);
-        }, 2800);
+        }, 3300);
     }
 
     showIndex(0);
@@ -460,7 +482,7 @@ function drawNightStory(delta) {
     var fadeOut = 1.2;
     var segment = fadeIn + hold + fadeOut;
 
-    for (var i = 0; i < 2; i++) {
+    for (var i = 0; i < storyLines.length; i++) {
         var local = storyTime - i * segment;
         var alpha = getAlpha(local, fadeIn, hold, fadeOut);
 
@@ -472,40 +494,14 @@ function drawNightStory(delta) {
         drawWrappedLine(storyLines[i], width / 2, height / 2, width * 0.78, 56);
     }
 
-    var groupStart = 2 * segment;
-    var groupLocalTime = storyTime - groupStart;
-    var stackStagger = 1.2;
-    var stackHold = hold;
-
-    if (groupLocalTime > 0) {
-        var stackFadeStart = stackStagger * 2 + stackHold;
-        var groupFadeAlpha = 1;
-
-        if (groupLocalTime > stackFadeStart) {
-            groupFadeAlpha = Math.max(0, 1 - ((groupLocalTime - stackFadeStart) / fadeOut));
-        }
-
-        var lineThreeAlpha = Math.min(1, groupLocalTime / fadeIn) * groupFadeAlpha;
-        var lineFourAlpha = Math.min(1, Math.max(0, (groupLocalTime - stackStagger) / fadeIn)) * groupFadeAlpha;
-        var lineFiveAlpha = Math.min(1, Math.max(0, (groupLocalTime - stackStagger * 2) / fadeIn)) * groupFadeAlpha;
-
-        context.fillStyle = "rgba(248, 240, 255, " + lineThreeAlpha + ")";
-        drawWrappedLine(storyLines[2], width / 2, height / 2, width * 0.78, 56);
-
-        context.fillStyle = "rgba(248, 240, 255, " + lineFourAlpha + ")";
-        drawWrappedLine(storyLines[3], width / 2, height / 2 + 70, width * 0.78, 56);
-
-        context.fillStyle = "rgba(248, 240, 255, " + lineFiveAlpha + ")";
-        drawWrappedLine(storyLines[4], width / 2, height / 2 + 140, width * 0.78, 56);
-    }
-
     context.shadowBlur = 0;
 
-    var fullDuration = groupStart + (stackStagger * 2) + stackHold + fadeOut + 0.8;
+    var fullDuration = storyLines.length * segment + 0.8;
     if (storyTime >= fullDuration) {
         scene = "ending";
         showView(endingView);
     }
+
 }
 
 var lastTime = performance.now();
